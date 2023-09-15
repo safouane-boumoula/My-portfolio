@@ -1,0 +1,80 @@
+/* Start Header */
+header .nav-container {
+  left: auto;
+  right: -60%;
+  transition: right var(--hover-transition);
+}
+
+/* Js Class */
+header .nav-container.showNavBar {
+  right: 0;
+}
+header .container .nav-mobile {
+  left: auto;
+  right: 0;
+  transition: width var(--hover-transition), right var(--hover-transition);
+}
+header .container .nav-mobile.navBarShowed-small {
+  left: auto;
+  right: 60%;
+}
+header .container .nav-mobile.navBarShowed-meduim {
+  left: auto;
+  right: 40%;
+}
+@media screen and (min-width: 768px) {
+  header .nav-container {
+    left: auto;
+    right: 0;
+    padding: 0;
+  }
+  header .parameters {
+    left: auto;
+    right: -205px;
+    z-index: 5;
+    padding: 25px 20px;
+    user-select: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 0 4px 4px;
+    transition: right var(--hover-transition);
+  }
+  header .parameters .show-parameters {
+    right: auto;
+    left: -50px;
+    box-shadow: rgba(99, 99, 99, 0.2) -4px 4px 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  header .parameters.showParameters {
+    left: auto;
+    right: 0;
+  }
+}
+/* End Header */
+
+/* Start Skills */
+.skills .skills-container .dev-skills .dev .skill .percent {
+  left: auto;
+  right: 0;
+}
+.skills .skills-container .dev-skills .dev .skill .percent .name {
+  left: auto;
+  right: 0;
+}
+/* End Skills */
+/* Start Contact */
+.contact .container .content .send-message form input[type="number"] {
+  padding: 0 45px 0 15px;
+}
+.contact .container .content .send-message form div i {
+  left: auto;
+  right: 0;
+}
+.contact .container .content .send-message form div span {
+  right: auto;
+  left: 0;
+}
+/* End Contact */
