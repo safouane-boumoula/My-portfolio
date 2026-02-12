@@ -445,35 +445,65 @@ class ContactForm {
     
     this.setLoading(true);
     
-    // Send to Formspree
+    // Methode 1: EmailJS (configuration requise)
+    // Remplacez ces valeurs par les votres depuis emailjs.com
+    const EMAILJS_SERVICE_ID = 'service_xxxxxx';  // Votre Service ID
+    const EMAILJS_TEMPLATE_ID = 'template_xxxxxx'; // Votre Template ID
+    const EMAILJS_PUBLIC_KEY = 'xxxxxxxxxxxxx';   // Votre Public Key
+    
+    // Methode 2: Fallback vers mailto (fonctionne immediatement)
+    const useMailto = true; // Mettre a false si vous configurez EmailJS
+    
     try {
-      const formData = new FormData(this.form);
-      
-      // Ajouter l'email du visiteur comme reply-to
-      const emailField = this.form.querySelector('input[name="email"]');
-      if (emailField && emailField.value) {
-        formData.append('_replyto', emailField.value);
+      if (useMailto) {
+        // Solution simple : ouvrir le client email
+        const formData = new FormData(this.form);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const subject = formData.get('subject') || 'Contact from Portfolio';
+        const message = formData.get('message');
+        const phone = formData.get('phone');
+        
+        const mailtoBody = `Name: ${name}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+
+Message:
+${message}`;
+        
+        const mailtoLink = `mailto:safwanboumoula0@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailtoBody)}`;
+        
+        // Ouvrir le client email
+        window.location.href = mailtoLink;
+        
+        this.showNotification('Opening your email client... Please send the email to complete.', 'success');
+        this.form.reset();
+      } else {
+        // EmailJS - necessite configuration
+        if (typeof emailjs !== 'undefined') {
+          emailjs.init(EMAILJS_PUBLIC_KEY);
+          
+          const formData = {
+            from_name: this.form.querySelector('[name="name"]').value,
+            from_email: this.form.querySelector('[name="email"]').value,
+            phone: this.form.querySelector('[name="phone"]').value,
+            subject: this.form.querySelector('[name="subject"]').value,
+            message: this.form.querySelector('[name="message"]').value,
+            to_email: 'safwanboumoula0@gmail.com'
+          };
+          
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, formData);
+          
+          this.showNotification('Message sent successfully! I will get back to you soon.', 'success');
+          this.form.reset();
+        }
       }
       
-      const response = await fetch(this.form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
+      // Reset floating labels
+      this.form.querySelectorAll('.form-group').forEach(group => {
+        group.classList.remove('has-value', 'focused');
       });
       
-      if (response.ok) {
-        this.showNotification('Message sent successfully! I will get back to you soon.', 'success');
-        this.form.reset();
-        // Reset floating labels
-        this.form.querySelectorAll('.form-group').forEach(group => {
-          group.classList.remove('has-value', 'focused');
-        });
-      } else {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to send');
-      }
     } catch (error) {
       console.error('Form error:', error);
       this.showNotification('Failed to send message. Please email me directly at safwanboumoula0@gmail.com', 'error');
