@@ -445,13 +445,27 @@ class ContactForm {
     
     this.setLoading(true);
     
-    // Simulate form submission
+    // Send to Formspree
     try {
-      await this.simulateSubmission();
-      this.showNotification('Message sent successfully!', 'success');
-      this.form.reset();
+      const formData = new FormData(this.form);
+      const response = await fetch(this.form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        this.showNotification('Message sent successfully! I will get back to you soon.', 'success');
+        this.form.reset();
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send');
+      }
     } catch (error) {
-      this.showNotification('Failed to send message. Please try again.', 'error');
+      console.error('Form error:', error);
+      this.showNotification('Failed to send message. Please email me directly at safwanboumoula0@gmail.com', 'error');
     } finally {
       this.setLoading(false);
     }
@@ -471,10 +485,6 @@ class ContactForm {
     });
     
     return isValid;
-  }
-
-  simulateSubmission() {
-    return new Promise(resolve => setTimeout(resolve, 1500));
   }
 
   setLoading(loading) {
