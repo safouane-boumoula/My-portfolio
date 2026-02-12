@@ -448,6 +448,13 @@ class ContactForm {
     // Send to Formspree
     try {
       const formData = new FormData(this.form);
+      
+      // Ajouter l'email du visiteur comme reply-to
+      const emailField = this.form.querySelector('input[name="email"]');
+      if (emailField && emailField.value) {
+        formData.append('_replyto', emailField.value);
+      }
+      
       const response = await fetch(this.form.action, {
         method: 'POST',
         body: formData,
@@ -459,6 +466,10 @@ class ContactForm {
       if (response.ok) {
         this.showNotification('Message sent successfully! I will get back to you soon.', 'success');
         this.form.reset();
+        // Reset floating labels
+        this.form.querySelectorAll('.form-group').forEach(group => {
+          group.classList.remove('has-value', 'focused');
+        });
       } else {
         const data = await response.json();
         throw new Error(data.error || 'Failed to send');
